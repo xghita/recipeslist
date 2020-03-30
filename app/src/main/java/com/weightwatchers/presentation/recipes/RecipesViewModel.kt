@@ -77,7 +77,6 @@ class RecipesViewModel(override val initialState: RecipesViewState, private val 
                             .startWith(RecipesChange.Loading)
                 }
 
-
         val showSnackBar = actions.ofType<RecipesAction.ShowSnackBarWithFilterInfo>()
                 .switchMap { action ->
                     recipesListUseCase.getRecipeFilter(action.position)

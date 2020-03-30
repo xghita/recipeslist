@@ -2,11 +2,9 @@ package com.weightwatchers.presentation.recipes.adapter
 
 import androidx.recyclerview.widget.DiffUtil
 import com.weightwatchers.data.network.model.Recipe
+import com.weightwatchers.data.network.model.RecipeDto
 
-class RecipeDiffCallback(
-        private val old: List<Recipe>,
-        private val new: List<Recipe>
-) : DiffUtil.Callback() {
+class RecipeDiffCallback(private val old: List<RecipeDto>, private val new: List<RecipeDto>) : DiffUtil.Callback() {
     override fun getOldListSize() = old.size
 
     override fun getNewListSize() = new.size

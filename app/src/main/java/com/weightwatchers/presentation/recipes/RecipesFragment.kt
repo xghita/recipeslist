@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.weightwatchers.base.BaseFragment
 import com.weightwatchers.data.network.model.Recipe
+import com.weightwatchers.data.network.model.RecipeDto
 import com.weightwatchers.domain.recipes.RecipesViewModelFactory
 import com.weightwatchers.presentation.recipes.adapter.ClickListener
 import com.weightwatchers.presentation.recipes.adapter.RecipesAdapter
@@ -109,7 +110,7 @@ class RecipesFragment : BaseFragment() {
         infoStateMessageTv.visibility = View.VISIBLE
     }
 
-    private fun renderRecipesList(recipes: List<Recipe>) {
+    private fun renderRecipesList(recipes: List<RecipeDto>) {
         progressLoading.visibility = View.GONE
         infoStateMessageTv.visibility = View.GONE
         recipesAdapter.updateRecipes(recipes)
