@@ -1,7 +1,6 @@
 package com.weightwatchers.presentation.recipes.state
 
-import com.weightwatchers.data.network.model.Recipe
-import com.weightwatchers.data.network.model.RecipeDto
+import com.weightwatchers.data.network.model.recipe.RecipeDto
 import com.ww.roxie.BaseState
 
 data class RecipesViewState(

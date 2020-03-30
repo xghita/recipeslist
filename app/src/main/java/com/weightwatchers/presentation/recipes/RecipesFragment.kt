@@ -9,8 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.weightwatchers.base.BaseFragment
-import com.weightwatchers.data.network.model.Recipe
-import com.weightwatchers.data.network.model.RecipeDto
+import com.weightwatchers.data.network.model.recipe.RecipeDto
 import com.weightwatchers.domain.recipes.RecipesViewModelFactory
 import com.weightwatchers.presentation.recipes.adapter.ClickListener
 import com.weightwatchers.presentation.recipes.adapter.RecipesAdapter

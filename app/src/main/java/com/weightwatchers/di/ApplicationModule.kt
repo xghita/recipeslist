@@ -4,12 +4,10 @@ import com.weightwatchers.data.network.api.ApiDecorator
 import com.weightwatchers.data.repository.RecipesRepository
 import com.weightwatchers.domain.recipes.RecipesListUseCase
 import com.weightwatchers.domain.recipes.RecipesViewModelFactory
-import com.weightwatchers.presentation.recipes.RecipesViewModel
 import com.weightwatchers.presentation.recipes.state.RecipesViewState
 import com.weightwatchers.ww_exercise_01.BuildConfig
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory

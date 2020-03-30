@@ -1,7 +1,6 @@
 package com.weightwatchers.domain.recipes
 
-import com.weightwatchers.data.network.model.Recipe
-import com.weightwatchers.data.network.model.RecipeDto
+import com.weightwatchers.data.network.model.recipe.RecipeDto
 import com.weightwatchers.data.repository.RecipesRepository
 import io.reactivex.Observable
 

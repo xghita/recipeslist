@@ -1,6 +1,6 @@
 package com.weightwatchers.data.network.api
 
-import com.weightwatchers.data.network.model.Recipe
+import com.weightwatchers.data.network.model.recipe.Recipe
 import io.reactivex.Observable
 import retrofit2.Retrofit
 

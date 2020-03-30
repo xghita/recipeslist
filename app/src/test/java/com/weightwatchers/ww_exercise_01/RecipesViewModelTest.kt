@@ -4,9 +4,8 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import com.nhaarman.mockito_kotlin.inOrder
 import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.verifyNoMoreInteractions
 import com.nhaarman.mockito_kotlin.whenever
-import com.weightwatchers.data.network.model.Recipe
+import com.weightwatchers.data.network.model.recipe.Recipe
 import com.weightwatchers.domain.recipes.RecipesListUseCase
 import com.weightwatchers.presentation.recipes.RecipesViewModel
 import com.weightwatchers.presentation.recipes.state.RecipesAction
