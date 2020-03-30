@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.weightwatchers.base.BaseFragment
-import com.weightwatchers.data.network.model.recipe.RecipeDto
+import com.weightwatchers.data.model.recipe.RecipeDto
 import com.weightwatchers.domain.recipes.RecipesViewModelFactory
 import com.weightwatchers.presentation.recipes.adapter.ClickListener
 import com.weightwatchers.presentation.recipes.adapter.RecipesAdapter
@@ -72,8 +72,8 @@ class RecipesFragment : BaseFragment() {
 
     private fun renderState(state: RecipesViewState) {
 
-        if (state.snackBarMessage != null) {
-            showSnackBarWithRecipeFilterInfo(state.snackBarMessage)
+        if (state.snackBarFilterInfo != null) {
+            showSnackBarFilterInfo(state.snackBarFilterInfo)
         }
 
         with(state) {
@@ -115,7 +115,7 @@ class RecipesFragment : BaseFragment() {
         recipesAdapter.updateRecipes(recipes)
     }
 
-    private fun showSnackBarWithRecipeFilterInfo(info: String) {
+    private fun showSnackBarFilterInfo(info: String) {
         val snackBar = Snackbar.make(recipesFragmentContainer, info, Snackbar.LENGTH_SHORT)
 
         snackBar.addCallback(object : Snackbar.Callback() {
@@ -129,6 +129,6 @@ class RecipesFragment : BaseFragment() {
     }
 
     private fun onRecipeSelected(position: Int) {
-        recipesViewModel.dispatch(RecipesAction.ShowSnackBarWithFilterInfo(position))
+        recipesViewModel.dispatch(RecipesAction.ShowSnackBarFilterInfo(position))
     }
 }

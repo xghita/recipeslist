@@ -45,11 +45,11 @@ class RecipesViewModel(override val initialState: RecipesViewState, private val 
                     isLoading = false,
                     errorInfoMessage = StaticResourcesProvider.getStaticStringResource(R.string.generic_network_error)
             )
-            is RecipesChange.ShowSnackBar -> state.copy(
-                    snackBarMessage = change.message
+            is RecipesChange.ShowSnackBarFilterInfo -> state.copy(
+                    snackBarFilterInfo = change.message
             )
-            is RecipesChange.SnackBarDismissed -> state.copy(
-                    snackBarMessage = null
+            is RecipesChange.SnackBarFilterInfoDismissed -> state.copy(
+                    snackBarFilterInfo = null
             )
         }
     }
@@ -77,15 +77,15 @@ class RecipesViewModel(override val initialState: RecipesViewState, private val 
                             .startWith(RecipesChange.Loading)
                 }
 
-        val showSnackBar = actions.ofType<RecipesAction.ShowSnackBarWithFilterInfo>()
+        val showSnackBar = actions.ofType<RecipesAction.ShowSnackBarFilterInfo>()
                 .switchMap { action ->
                     recipesListUseCase.getRecipeFilter(action.position)
                             .subscribeOn(Schedulers.io())
                             .map<RecipesChange> {
                                 if (it.isNotEmpty()) {
-                                    RecipesChange.ShowSnackBar(it)
+                                    RecipesChange.ShowSnackBarFilterInfo(it)
                                 } else {
-                                    RecipesChange.ShowSnackBar(StaticResourcesProvider.getStaticStringResource(R.string.recipes_filter_info))
+                                    RecipesChange.ShowSnackBarFilterInfo(StaticResourcesProvider.getStaticStringResource(R.string.recipes_filter_info))
                                 }
                             }
                             .onErrorReturn {
@@ -95,7 +95,7 @@ class RecipesViewModel(override val initialState: RecipesViewState, private val 
 
         val snackBarDismissed = actions.ofType<RecipesAction.SnackBarFilterInfoDismissed>()
                 .switchMap {
-                    Observable.just(RecipesChange.SnackBarDismissed)
+                    Observable.just(RecipesChange.SnackBarFilterInfoDismissed)
                 }
 
 

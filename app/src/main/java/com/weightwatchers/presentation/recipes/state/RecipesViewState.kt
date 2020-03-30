@@ -1,6 +1,6 @@
 package com.weightwatchers.presentation.recipes.state
 
-import com.weightwatchers.data.network.model.recipe.RecipeDto
+import com.weightwatchers.data.model.recipe.RecipeDto
 import com.ww.roxie.BaseState
 
 data class RecipesViewState(
@@ -9,6 +9,6 @@ data class RecipesViewState(
         val isLoading: Boolean = false,
         val errorInfoMessage: String? = null,
         val emptyListInfoMessage : String? = null,
-        val snackBarMessage: String? = null
+        val snackBarFilterInfo: String? = null
 ) : BaseState
 

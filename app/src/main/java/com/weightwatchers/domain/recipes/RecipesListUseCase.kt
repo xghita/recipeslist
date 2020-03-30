@@ -1,7 +1,7 @@
 package com.weightwatchers.domain.recipes
 
-import com.weightwatchers.data.network.model.recipe.RecipeDto
-import com.weightwatchers.data.repository.RecipesRepository
+import com.weightwatchers.data.model.recipe.RecipeDto
+import com.weightwatchers.data.repository.recipes.RecipesRepository
 import io.reactivex.Observable
 
 class RecipesListUseCase(private val recipesRepository: RecipesRepository) {

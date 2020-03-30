@@ -1,7 +1,8 @@
 package com.weightwatchers.di
 
-import com.weightwatchers.data.network.api.ApiDecorator
-import com.weightwatchers.data.repository.RecipesRepository
+import com.weightwatchers.data.api.ApiDecorator
+import com.weightwatchers.data.repository.recipes.RecipesMapper
+import com.weightwatchers.data.repository.recipes.RecipesRepository
 import com.weightwatchers.domain.recipes.RecipesListUseCase
 import com.weightwatchers.domain.recipes.RecipesViewModelFactory
 import com.weightwatchers.presentation.recipes.state.RecipesViewState
@@ -35,13 +36,15 @@ object ApplicationModule {
                             .build()
                 }
 
+                single { RecipesViewState() }
+
+                single { RecipesMapper() }
+
                 single { ApiDecorator(get()) }
 
-                single { RecipesRepository(get()) }
+                single { RecipesRepository(get(), get()) }
 
                 single { RecipesListUseCase(get()) }
-
-                single { RecipesViewState() }
 
                 factory { RecipesViewModelFactory(get(), get()) }
             }

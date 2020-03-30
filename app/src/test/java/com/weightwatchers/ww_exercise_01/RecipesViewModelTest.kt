@@ -5,7 +5,7 @@ import androidx.lifecycle.Observer
 import com.nhaarman.mockito_kotlin.inOrder
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
-import com.weightwatchers.data.network.model.recipe.Recipe
+import com.weightwatchers.data.model.recipe.RecipeDto
 import com.weightwatchers.domain.recipes.RecipesListUseCase
 import com.weightwatchers.presentation.recipes.RecipesViewModel
 import com.weightwatchers.presentation.recipes.state.RecipesAction
@@ -25,16 +25,8 @@ class RecipesViewModelTest {
     @get:Rule
     val testSchedulerRule = RxTestSchedulerRule()
 
-    private val recipesList = listOf(Recipe("filter", "image_url", "title"),
-            Recipe("filter", "image_url", "title"))
-
-    private val states = listOf(
-            RecipesViewState(isLoading = true),
-            RecipesViewState(isIdle = true),
-            RecipesViewState(emptyListInfoMessage = "sfdfsf"),
-            RecipesViewState(errorInfoMessage = "getS"),
-            RecipesViewState(recipesList)
-    )
+    private val recipesList = listOf(RecipeDto("filter", "image_url", "title"),
+            RecipeDto("filter", "image_url", "title"))
 
     private lateinit var recipesViewModel: RecipesViewModel
     private val testObserver = mock<Observer<RecipesViewState>>()
@@ -110,7 +102,7 @@ class RecipesViewModelTest {
         val showSnackBarState = RecipesViewState()
         val snackBarDismissed = RecipesViewState()
 
-        recipesViewModel.dispatch(RecipesAction.ShowSnackBarWithFilterInfo(0))
+        recipesViewModel.dispatch(RecipesAction.ShowSnackBarFilterInfo(0))
 
 
         whenever(recipesListUseCase.getRecipeFilter(0)).thenReturn(Observable.just("filter"))

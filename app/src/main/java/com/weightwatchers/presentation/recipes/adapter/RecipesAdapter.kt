@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
-import com.weightwatchers.data.network.model.recipe.RecipeDto
+import com.weightwatchers.data.model.recipe.RecipeDto
 import com.weightwatchers.ww_exercise_01.R
 import kotlinx.android.synthetic.main.item_recipe.view.*
 
