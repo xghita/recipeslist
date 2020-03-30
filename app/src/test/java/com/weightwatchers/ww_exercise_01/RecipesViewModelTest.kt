@@ -1,0 +1,118 @@
+package com.weightwatchers.ww_exercise_01
+
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.Observer
+import com.nhaarman.mockito_kotlin.inOrder
+import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.verifyNoMoreInteractions
+import com.nhaarman.mockito_kotlin.whenever
+import com.weightwatchers.data.network.model.Recipe
+import com.weightwatchers.domain.recipes.RecipesListUseCase
+import com.weightwatchers.presentation.recipes.RecipesViewModel
+import com.weightwatchers.presentation.recipes.state.RecipesAction
+import com.weightwatchers.presentation.recipes.state.RecipesViewState
+import io.reactivex.Observable
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
+import java.lang.RuntimeException
+
+class RecipesViewModelTest {
+
+    @get:Rule
+    val instantExecutorRule = InstantTaskExecutorRule()
+
+    @get:Rule
+    val testSchedulerRule = RxTestSchedulerRule()
+
+    private val recipesList = listOf(Recipe("filter", "image_url", "title"),
+            Recipe("filter", "image_url", "title"))
+
+    private val states = listOf(
+            RecipesViewState(isLoading = true),
+            RecipesViewState(isIdle = true),
+            RecipesViewState(emptyListInfoMessage = "sfdfsf"),
+            RecipesViewState(errorInfoMessage = "getS"),
+            RecipesViewState(recipesList)
+    )
+
+    private lateinit var recipesViewModel: RecipesViewModel
+    private val testObserver = mock<Observer<RecipesViewState>>()
+    private val recipesListUseCase = mock<RecipesListUseCase>()
+
+    @Before
+    fun setUp() {
+        recipesViewModel = RecipesViewModel(RecipesViewState(), recipesListUseCase)
+        recipesViewModel.observableState.observeForever(testObserver)
+    }
+
+    @Test
+    fun verifyLoadStateSuccess() {
+
+        val recipesLoading = RecipesViewState(isLoading = true)
+        val recipesLoaded = RecipesViewState(recipesList)
+
+        whenever(recipesListUseCase.loadRecipes()).thenReturn(Observable.just(recipesList))
+
+        recipesViewModel.dispatch(RecipesAction.LoadRecipes)
+        testSchedulerRule.triggerActions()
+
+        inOrder(testObserver) {
+            verify(testObserver).onChanged(recipesLoading)
+            verify(testObserver).onChanged(recipesLoaded)
+        }
+
+        verifyNoMoreInteractions(testObserver)
+    }
+
+    @Test
+    fun verifyLoadEmptyState() {
+        val recipesLoading = RecipesViewState(isLoading = true)
+        val emptyResult = RecipesViewState(emptyListInfoMessage = "There are no recipes available at the moment.")
+
+        whenever(recipesListUseCase.loadRecipes()).thenReturn(Observable.just(ArrayList()))
+
+        recipesViewModel.dispatch(RecipesAction.LoadRecipes)
+        testSchedulerRule.triggerActions()
+
+        inOrder(testObserver) {
+            verify(testObserver).onChanged(recipesLoading)
+            verify(testObserver).onChanged(emptyResult)
+        }
+
+        verifyNoMoreInteractions(testObserver)
+    }
+
+    @Test
+    fun verifyLoadErrorState() {
+        val recipesLoading = RecipesViewState(isLoading = true)
+        val errorResult = RecipesViewState(errorInfoMessage = "There was an error fetching data. Please try again later.")
+
+        whenever(recipesListUseCase.loadRecipes()).thenReturn(Observable.error(RuntimeException()))
+
+        recipesViewModel.dispatch(RecipesAction.LoadRecipes)
+        testSchedulerRule.triggerActions()
+
+        inOrder(testObserver) {
+            verify(testObserver).onChanged(recipesLoading)
+            verify(testObserver).onChanged(errorResult)
+        }
+
+        //        verifyNoMoreInteractions(testObserver)
+    }
+
+    @Test
+    fun verifyShowFilterInfo() {
+
+        val filter = "[\\\"contentTags.food_cuisines.tags:Italian\\\"]"
+        val showSnackBarState = RecipesViewState()
+        val snackBarDismissed = RecipesViewState()
+
+        recipesViewModel.dispatch(RecipesAction.ShowSnackBarWithFilterInfo(0))
+
+
+        whenever(recipesListUseCase.getRecipeFilter(0)).thenReturn(Observable.just("filter"))
+
+    }
+
+}

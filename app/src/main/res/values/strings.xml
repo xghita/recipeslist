@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Recipes List</string>
+
+    <!--Recipes-->
+    <string name="recipes_empty_list">There are no recipes available at the moment.</string>
+    <string name="recipes_filter_info">There is no filter associated with this recipe</string>
+
+    <!--Generic-->
+    <string name="generic_network_error">There was an error fetching data. Please try again later.</string>
+</resources>
