@@ -10,7 +10,7 @@ class RecipesMapper : Mapper<Recipe, RecipeDto> {
     override fun mapToDto(recipe: Recipe): RecipeDto {
         return RecipeDto(
                 title = recipe.title,
-                photoUrl = "${BuildConfig.SERVER_URL}${recipe.image}",
+                imageUrl = "${BuildConfig.SERVER_URL}${recipe.image}",
                 filter = recipe.filter.substringAfter(":").substringBefore("\\"))
     }
 

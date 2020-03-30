@@ -15,7 +15,8 @@ import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 
-class RecipesViewModel(override val initialState: RecipesViewState, private val recipesListUseCase: RecipesListUseCase) : BaseViewModel<RecipesAction, RecipesViewState>() {
+class RecipesViewModel(override val initialState: RecipesViewState, private val recipesListUseCase: RecipesListUseCase,
+                       private val resourcesProvider: StaticResourcesProvider) : BaseViewModel<RecipesAction, RecipesViewState>() {
 
     private val reducer: Reducer<RecipesViewState, RecipesChange> = { state, change ->
         when (change) {
@@ -34,7 +35,7 @@ class RecipesViewModel(override val initialState: RecipesViewState, private val 
                         isLoading = false,
                         recipes = emptyList(),
                         errorInfoMessage = null,
-                        emptyListInfoMessage = StaticResourcesProvider.getStaticStringResource(R.string.recipes_empty_list)
+                        emptyListInfoMessage = resourcesProvider.getStaticStringResource(R.string.recipes_empty_list)
                 )
             }
             is RecipesChange.RecipesList -> state.copy(
@@ -43,7 +44,7 @@ class RecipesViewModel(override val initialState: RecipesViewState, private val 
             )
             is RecipesChange.Error -> state.copy(
                     isLoading = false,
-                    errorInfoMessage = StaticResourcesProvider.getStaticStringResource(R.string.generic_network_error)
+                    errorInfoMessage = resourcesProvider.getStaticStringResource(R.string.generic_network_error)
             )
             is RecipesChange.ShowSnackBarFilterInfo -> state.copy(
                     snackBarFilterInfo = change.message

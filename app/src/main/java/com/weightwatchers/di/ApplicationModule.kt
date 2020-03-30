@@ -46,6 +46,6 @@ object ApplicationModule {
 
                 single { RecipesListUseCase(get()) }
 
-                factory { RecipesViewModelFactory(get(), get()) }
+                factory { RecipesViewModelFactory(get(), get(), get()) }
             }
 }

@@ -27,7 +27,7 @@ class RecipesAdapter(val clickListener: ClickListener) : RecyclerView.Adapter<Re
         val recipe = recipes[position]
 
         holder.itemView.recipeName.text = recipe.title
-        Picasso.get().load(recipe.photoUrl).error(R.drawable.ic_recipe_placeholder).into(holder.itemView.recipeImage)
+        Picasso.get().load(recipe.imageUrl).error(R.drawable.ic_recipe_placeholder).into(holder.itemView.recipeImage)
     }
 
     override fun getItemCount() = recipes.size
