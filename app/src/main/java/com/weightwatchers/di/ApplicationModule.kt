@@ -3,7 +3,7 @@ package com.weightwatchers.di
 import com.weightwatchers.data.api.ApiDecorator
 import com.weightwatchers.data.repository.recipes.RecipesMapper
 import com.weightwatchers.data.repository.recipes.RecipesRepository
-import com.weightwatchers.domain.recipes.RecipesListUseCase
+import com.weightwatchers.domain.recipes.RecipesUseCase
 import com.weightwatchers.domain.recipes.RecipesViewModelFactory
 import com.weightwatchers.presentation.recipes.state.RecipesViewState
 import com.weightwatchers.ww_exercise_01.BuildConfig
@@ -44,8 +44,8 @@ object ApplicationModule {
 
                 single { RecipesRepository(get(), get()) }
 
-                single { RecipesListUseCase(get()) }
+                single { RecipesUseCase(get()) }
 
-                factory { RecipesViewModelFactory(get(), get(), get()) }
+                factory { RecipesViewModelFactory(get(), get()) }
             }
 }

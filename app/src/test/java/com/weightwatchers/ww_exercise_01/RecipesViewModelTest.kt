@@ -1,17 +1,13 @@
 package com.weightwatchers.ww_exercise_01
 
-import android.content.res.Resources
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
-import com.nhaarman.mockito_kotlin.inOrder
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.whenever
+import com.nhaarman.mockito_kotlin.*
 import com.weightwatchers.data.model.recipe.RecipeDto
-import com.weightwatchers.domain.recipes.RecipesListUseCase
+import com.weightwatchers.domain.recipes.RecipesUseCase
 import com.weightwatchers.presentation.recipes.RecipesViewModel
 import com.weightwatchers.presentation.recipes.state.RecipesAction
 import com.weightwatchers.presentation.recipes.state.RecipesViewState
-import com.weightwatchers.utils.StaticResourcesProvider
 import io.reactivex.Observable
 import org.junit.Before
 import org.junit.Rule
@@ -30,13 +26,13 @@ class RecipesViewModelTest {
 
     private lateinit var recipesViewModel: RecipesViewModel
     private val testObserver = mock<Observer<RecipesViewState>>()
-    private val recipesListUseCase = mock<RecipesListUseCase>()
-    private val staticResourcesProvider = mock<StaticResourcesProvider>()
+    private val recipesUseCase = mock<RecipesUseCase>()
 
     @Before
     fun setUp() {
-        recipesViewModel = RecipesViewModel(RecipesViewState(), recipesListUseCase, staticResourcesProvider)
+        recipesViewModel = RecipesViewModel(RecipesViewState(), recipesUseCase)
         recipesViewModel.observableState.observeForever(testObserver)
+        verify(testObserver).onChanged(RecipesViewState())
     }
 
     @Test
@@ -45,7 +41,7 @@ class RecipesViewModelTest {
         val recipesLoading = RecipesViewState(isLoading = true)
         val recipesLoaded = RecipesViewState(recipesList)
 
-        whenever(recipesListUseCase.loadRecipes()).thenReturn(Observable.just(recipesList))
+        whenever(recipesUseCase.loadRecipes()).thenReturn(Observable.just(recipesList))
 
         recipesViewModel.dispatch(RecipesAction.LoadRecipes)
         testSchedulerRule.triggerActions()
@@ -54,16 +50,16 @@ class RecipesViewModelTest {
             verify(testObserver).onChanged(recipesLoading)
             verify(testObserver).onChanged(recipesLoaded)
         }
+
+        verifyNoMoreInteractions(testObserver)
     }
 
     @Test
     fun verifyLoadEmptyState() {
         val recipesLoading = RecipesViewState(isLoading = true)
-        val emptyResultMessage = "There are no recipes available at the moment."
-        val emptyResult = RecipesViewState(emptyListInfoMessage = emptyResultMessage)
+        val emptyResult = RecipesViewState(emptyListInfoMessage = R.string.recipes_empty_list)
 
-        whenever(recipesListUseCase.loadRecipes()).thenReturn(Observable.just(emptyList()))
-        whenever(staticResourcesProvider.getStaticStringResource(R.string.recipes_empty_list)).thenReturn(emptyResultMessage)
+        whenever(recipesUseCase.loadRecipes()).thenReturn(Observable.just(emptyList()))
 
         recipesViewModel.dispatch(RecipesAction.LoadRecipes)
         testSchedulerRule.triggerActions()
@@ -72,16 +68,16 @@ class RecipesViewModelTest {
             verify(testObserver).onChanged(recipesLoading)
             verify(testObserver).onChanged(emptyResult)
         }
+
+        verifyNoMoreInteractions(testObserver)
     }
 
     @Test
     fun verifyLoadErrorState() {
         val recipesLoading = RecipesViewState(isLoading = true)
-        val errorResultMessage = "There was an error fetching data. Please try again later."
-        val errorResult = RecipesViewState(errorInfoMessage = errorResultMessage)
+        val errorResult = RecipesViewState(errorInfoMessage = R.string.generic_network_error)
 
-        whenever(recipesListUseCase.loadRecipes()).thenReturn(Observable.error(RuntimeException()))
-        whenever(staticResourcesProvider.getStaticStringResource(R.string.generic_network_error)).thenReturn(errorResultMessage)
+        whenever(recipesUseCase.loadRecipes()).thenReturn(Observable.error(RuntimeException()))
 
         recipesViewModel.dispatch(RecipesAction.LoadRecipes)
         testSchedulerRule.triggerActions()
@@ -90,16 +86,26 @@ class RecipesViewModelTest {
             verify(testObserver).onChanged(recipesLoading)
             verify(testObserver).onChanged(errorResult)
         }
+
+        verifyNoMoreInteractions(testObserver)
     }
 
     @Test
-    fun verifyShowFilterInfo() {
+    fun verifyShowAndDismissFilterInfo() {
 
         val position = 0
 
-        recipesViewModel.dispatch(RecipesAction.ShowSnackBarFilterInfo(position))
+        whenever(recipesUseCase.getRecipeFilter(position)).thenReturn(Observable.just(recipesList[position].filter))
 
-        whenever(recipesListUseCase.getRecipeFilter(position)).thenReturn(Observable.just("filter0"))
+        recipesViewModel.dispatch(RecipesAction.ShowSnackBarFilterInfo(position))
+        testSchedulerRule.triggerActions()
+
+        verify(recipesUseCase).getRecipeFilter(position)
+
+        verify(testObserver).onChanged(RecipesViewState(snackBarFilterInfo = recipesList[position].filter))
+        verify(testObserver).onChanged(RecipesViewState())
+
+        verifyNoMoreInteractions(testObserver)
     }
 
 }

@@ -4,7 +4,7 @@ import com.weightwatchers.data.model.recipe.RecipeDto
 import com.weightwatchers.data.repository.recipes.RecipesRepository
 import io.reactivex.Observable
 
-class RecipesListUseCase(private val recipesRepository: RecipesRepository) {
+class RecipesUseCase(private val recipesRepository: RecipesRepository) {
 
     fun loadRecipes(): Observable<List<RecipeDto>> = recipesRepository.getRecipeList()
 

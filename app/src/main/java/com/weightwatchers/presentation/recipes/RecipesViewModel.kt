@@ -1,10 +1,9 @@
 package com.weightwatchers.presentation.recipes
 
-import com.weightwatchers.domain.recipes.RecipesListUseCase
+import com.weightwatchers.domain.recipes.RecipesUseCase
 import com.weightwatchers.presentation.recipes.state.RecipesChange
 import com.weightwatchers.presentation.recipes.state.RecipesAction
 import com.weightwatchers.presentation.recipes.state.RecipesViewState
-import com.weightwatchers.utils.StaticResourcesProvider
 import com.weightwatchers.ww_exercise_01.R
 import com.ww.roxie.BaseViewModel
 import com.ww.roxie.Reducer
@@ -15,14 +14,12 @@ import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 
-class RecipesViewModel(override val initialState: RecipesViewState, private val recipesListUseCase: RecipesListUseCase,
-                       private val resourcesProvider: StaticResourcesProvider) : BaseViewModel<RecipesAction, RecipesViewState>() {
+class RecipesViewModel(override val initialState: RecipesViewState, private val recipesUseCase: RecipesUseCase) : BaseViewModel<RecipesAction, RecipesViewState>() {
 
     private val reducer: Reducer<RecipesViewState, RecipesChange> = { state, change ->
         when (change) {
             is RecipesChange.Loading -> {
                 state.copy(
-                        isIdle = false,
                         isLoading = true,
                         recipes = emptyList(),
                         errorInfoMessage = null,
@@ -31,11 +28,10 @@ class RecipesViewModel(override val initialState: RecipesViewState, private val 
             }
             is RecipesChange.EmptyList -> {
                 state.copy(
-                        isIdle = false,
                         isLoading = false,
                         recipes = emptyList(),
                         errorInfoMessage = null,
-                        emptyListInfoMessage = resourcesProvider.getStaticStringResource(R.string.recipes_empty_list)
+                        emptyListInfoMessage = R.string.recipes_empty_list
                 )
             }
             is RecipesChange.RecipesList -> state.copy(
@@ -44,7 +40,7 @@ class RecipesViewModel(override val initialState: RecipesViewState, private val 
             )
             is RecipesChange.Error -> state.copy(
                     isLoading = false,
-                    errorInfoMessage = resourcesProvider.getStaticStringResource(R.string.generic_network_error)
+                    errorInfoMessage = R.string.generic_network_error
             )
             is RecipesChange.ShowSnackBarFilterInfo -> state.copy(
                     snackBarFilterInfo = change.message
@@ -62,7 +58,7 @@ class RecipesViewModel(override val initialState: RecipesViewState, private val 
     private fun bindActions() {
         val loadRecipes = actions.ofType<RecipesAction.LoadRecipes>()
                 .switchMap {
-                    recipesListUseCase.loadRecipes()
+                    recipesUseCase.loadRecipes()
                             .subscribeOn(Schedulers.io())
                             .map {
                                 if (it.isNotEmpty()) {
@@ -80,14 +76,10 @@ class RecipesViewModel(override val initialState: RecipesViewState, private val 
 
         val showSnackBar = actions.ofType<RecipesAction.ShowSnackBarFilterInfo>()
                 .switchMap { action ->
-                    recipesListUseCase.getRecipeFilter(action.position)
+                    recipesUseCase.getRecipeFilter(action.position)
                             .subscribeOn(Schedulers.io())
                             .map<RecipesChange> {
-                                if (it.isNotEmpty()) {
-                                    RecipesChange.ShowSnackBarFilterInfo(it)
-                                } else {
-                                    RecipesChange.ShowSnackBarFilterInfo(StaticResourcesProvider.getStaticStringResource(R.string.recipes_filter_info))
-                                }
+                                RecipesChange.ShowSnackBarFilterInfo(it)
                             }
                             .onErrorReturn {
                                 RecipesChange.Error(it)
@@ -102,9 +94,6 @@ class RecipesViewModel(override val initialState: RecipesViewState, private val 
 
         disposables += Observable.merge(loadRecipes, showSnackBar, snackBarDismissed)
                 .scan(initialState, reducer)
-                .filter {
-                    !it.isIdle
-                }
                 .distinctUntilChanged()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(state::setValue, Timber::e)

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.StringRes
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
@@ -15,7 +16,6 @@ import com.weightwatchers.presentation.recipes.adapter.ClickListener
 import com.weightwatchers.presentation.recipes.adapter.RecipesAdapter
 import com.weightwatchers.presentation.recipes.state.RecipesAction
 import com.weightwatchers.presentation.recipes.state.RecipesViewState
-import com.weightwatchers.utils.StaticResourcesProvider
 import com.weightwatchers.utils.adapter.GridItemSpacingDecoration
 import com.weightwatchers.ww_exercise_01.R
 import kotlinx.android.synthetic.main.fragment_recipes_list.*
@@ -42,7 +42,8 @@ class RecipesFragment : BaseFragment() {
 
         recipesViewModel.observableState.observe(viewLifecycleOwner, Observer { state ->
             state?.let {
-                renderState(state) }
+                renderState(state)
+            }
         })
 
         recipesAdapter = RecipesAdapter(clickListener)
@@ -54,8 +55,8 @@ class RecipesFragment : BaseFragment() {
 
     private fun setupRecyclerView() {
 
-        val spanCount = StaticResourcesProvider.getStaticIntResource(R.integer.grid_span_size)
-        val gridSpacing = StaticResourcesProvider.getStaticDimenResource(R.dimen.grid_spacing)
+        val spanCount = resources.getInteger(R.integer.grid_span_size)
+        val gridSpacing = resources.getDimensionPixelSize(R.dimen.grid_spacing)
 
         val gridLayoutManager = GridLayoutManager(activity, spanCount)
         gridLayoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
@@ -82,10 +83,10 @@ class RecipesFragment : BaseFragment() {
                     renderLoadingState()
                 }
                 errorInfoMessage != null -> {
-                    renderErrorState(errorInfoMessage)
+                    renderNoDataView(errorInfoMessage)
                 }
                 emptyListInfoMessage != null -> {
-                    renderEmptyState(emptyListInfoMessage)
+                    renderNoDataView(emptyListInfoMessage)
                 }
                 else -> renderRecipesList(recipes)
             }
@@ -97,15 +98,9 @@ class RecipesFragment : BaseFragment() {
         infoStateMessageTv.visibility = View.GONE
     }
 
-    private fun renderErrorState(message: String) {
+    private fun renderNoDataView(@StringRes message: Int) {
         progressLoading.visibility = View.GONE
-        infoStateMessageTv.text = message
-        infoStateMessageTv.visibility = View.VISIBLE
-    }
-
-    private fun renderEmptyState(message: String) {
-        progressLoading.visibility = View.GONE
-        infoStateMessageTv.text = message
+        infoStateMessageTv.text = getString(message)
         infoStateMessageTv.visibility = View.VISIBLE
     }
 
@@ -116,7 +111,12 @@ class RecipesFragment : BaseFragment() {
     }
 
     private fun showSnackBarFilterInfo(info: String) {
-        val snackBar = Snackbar.make(recipesFragmentContainer, info, Snackbar.LENGTH_SHORT)
+
+        val snackBar = if (info.isEmpty()) {
+            Snackbar.make(recipesFragmentContainer, getString(R.string.recipes_filter_info), Snackbar.LENGTH_SHORT)
+        } else {
+            Snackbar.make(recipesFragmentContainer, info, Snackbar.LENGTH_SHORT)
+        }
 
         snackBar.addCallback(object : Snackbar.Callback() {
             override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {
